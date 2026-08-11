@@ -1,7 +1,7 @@
 import uuid
 import logging
 from fastapi import FastAPI, Request
-from app.routers import users,products,auth
+from app.routers import users,products,auth,files
 from app.core.exceptions import AppException
 from app.core.exception_handler import app_exception_handler, validation_exception_handler, generic_exception_handler, database_exception_handler
 from fastapi.exceptions import RequestValidationError
@@ -50,6 +50,7 @@ app.add_exception_handler(Exception, generic_exception_handler)
 
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/users", tags=["Users"])
+app.include_router(files.router, prefix="/files", tags=["Files"])
 app.include_router(products.router, prefix="/products", tags=["Products"])
 
 @app.get("/")

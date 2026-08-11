@@ -38,3 +38,18 @@ class InvalidAuthenticationCredentialsException(AppException):
     def __init__(self):
         message = "Invalid authentication credentials"
         super().__init__(message, status_code=401, code="INVALID_AUTH_CREDENTIALS")
+
+class InsufficientPermissionsException(AppException):
+    def __init__(self):
+        message = "Insufficient permissions"
+        super().__init__(message, status_code=403, code="INSUFFICIENT_PERMISSIONS")
+
+class UnsupportedFileTypeExecption(AppException):
+    def __init__(self):
+        message = "Unsupported file type"
+        super().__init__(message, status_code=400, code="UNSUPPORTED_FILE_TYPE")
+
+class FileTooLargeExecption(AppException):
+    def __init__(self):
+        message = "File too large"
+        super().__init__(message, status_code=413, code="FILE_TOO_LARGE")

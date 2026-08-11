@@ -1,4 +1,6 @@
 import jwt
+from typing import Annotated
+from fastapi import Depends
 from jwt.exceptions import InvalidTokenError
 from typing import Annotated
 from fastapi import Depends
@@ -58,3 +60,8 @@ def get_current_user(
     if user is None:
         raise UserNotFoundException()
     return user
+
+CurrentUser = Annotated[
+    User,
+    Depends(get_current_user)
+]

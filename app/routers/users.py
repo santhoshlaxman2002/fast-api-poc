@@ -1,11 +1,11 @@
-from fastapi import APIRouter, HTTPException, Path, status, Depends, Query
+from fastapi import APIRouter, Path, status, Depends, Query
 from app.schemas.user import UserCreate, UserResponse, UserUpdate
 from app.services.user_service import UserService
 from app.dependencies.user import get_user_service
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.models.user import User
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import CurrentUser
+from app.dependencies.authorization import AdminUser
 
 router = APIRouter()
 
@@ -16,8 +16,9 @@ router = APIRouter()
 )
 def create_user(
     user: UserCreate,
+    _: AdminUser,
     db: Session = Depends(get_db),
-    service: UserService = Depends(get_user_service)
+    service: UserService = Depends(get_user_service),
 ):
     return service.create_user(db, user)
 
@@ -26,10 +27,11 @@ def create_user(
     response_model=list[UserResponse]
 )
 def get_users(
+    _: AdminUser,
     page: int = Query(1, ge=1),
     size: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
-    service: UserService = Depends(get_user_service)
+    service: UserService = Depends(get_user_service),
 ):
     skip = (page - 1) * size
     return service.get_users(
@@ -43,7 +45,7 @@ def get_users(
     response_model=UserResponse
 )
 def get_current_user(
-    user: User = Depends(get_current_user)
+    user: CurrentUser
 ):
     return user
 
@@ -52,9 +54,10 @@ def get_current_user(
     response_model=UserResponse
 )
 def get_user(
+    _: AdminUser,
     user_id: int = Path(..., ge=1),
     db: Session = Depends(get_db),
-    service: UserService = Depends(get_user_service)
+    service: UserService = Depends(get_user_service),
 ):
     user = service.get_user(db, user_id)
     return user
@@ -65,9 +68,10 @@ def get_user(
 )
 def update_user(
     user_data: UserUpdate,
+    _: AdminUser,
     user_id: int = Path(..., ge=1),
     db: Session = Depends(get_db),
-    service: UserService = Depends(get_user_service)
+    service: UserService = Depends(get_user_service),
 ):
     user = service.update_user(
         db,
@@ -82,9 +86,10 @@ def update_user(
     status_code=status.HTTP_204_NO_CONTENT
 )
 def delete_user(
+    _: AdminUser,
     user_id: int = Path(..., ge=1),
     db: Session = Depends(get_db),
-    service: UserService = Depends(get_user_service)
+    service: UserService = Depends(get_user_service),
 ):
     return service.delete_user(
         db,
