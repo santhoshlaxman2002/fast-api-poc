@@ -28,6 +28,7 @@ class UserRepository:
         email: str
     ) -> User | None:
         statement = select(User).where(User.email == email)
+        # TODO: Need to see what is scalar
         return db.scalar(statement)
 
     def get_all(
@@ -50,3 +51,7 @@ class UserRepository:
     ) -> None:
         db.delete(user)
         db.commit()
+
+    # TODO:
+    def update():
+        pass

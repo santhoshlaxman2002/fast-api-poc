@@ -30,6 +30,7 @@ def decode_token(
     ]
 ):
     try:
+        # TODO: Need to move decode to security.py and check whether this checks invalid token and token expiration
         payload = jwt.decode(
             token,
             settings.JWT_SECRET_KEY,

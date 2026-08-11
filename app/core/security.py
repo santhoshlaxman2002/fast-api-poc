@@ -4,8 +4,10 @@ from app.core.settings import settings
 from datetime import timedelta, datetime, timezone
 from fastapi.security import OAuth2PasswordBearer
 
+# TODO: Need to specify the algorithm
 password_hash = PasswordHash.recommended()
 
+# TODO: Need to add comments
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def hash_password(password: str) -> str:

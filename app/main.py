@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import IntegrityError
 
 app = FastAPI()
+# TODO: Need to see about the logger settings and how to use it properly
 logger = logging.getLogger("uvicorn.error")
 
 app.add_middleware(
@@ -29,6 +30,7 @@ async def log_request(request: Request, call_next):
     logger.info(f"[{request_id}] Response status: {response.status_code}")
     return response
 
+# TODO: Need to check the meaning for this decorator
 @app.middleware("http")
 async def request_id(
     request: Request,
@@ -43,6 +45,7 @@ async def request_id(
 app.add_exception_handler(AppException, app_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(IntegrityError, database_exception_handler)
+# TODO: Need to check for Unhandled Exception
 app.add_exception_handler(Exception, generic_exception_handler)
 
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])

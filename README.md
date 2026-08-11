@@ -1,3 +1,4 @@
+<!-- TODO: Description -->
 uv run alembic revision --autogenerate -m "description"
 
 uv run alembic upgrade head
