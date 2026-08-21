@@ -1,5 +1,8 @@
 import uuid
 import logging
+from collections.abc import Mapping
+from typing import Any
+
 from fastapi import FastAPI, Request
 from app.routers import users,products,auth,files
 from app.core.exceptions import AppException
@@ -9,6 +12,36 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import IntegrityError
 
 app = FastAPI()
+
+
+def _add_swagger_file_format(value: Any) -> None:
+    """Add Swagger UI's file-input hint to Pydantic's OpenAPI 3.1 file schema."""
+    if isinstance(value, Mapping):
+        if (
+            value.get("type") == "string"
+            and value.get("contentMediaType") == "application/octet-stream"
+        ):
+            # `contentMediaType` is valid OpenAPI 3.1, but Swagger UI needs this
+            # compatibility hint before it renders an <input type="file">.
+            value.setdefault("format", "binary")
+
+        for nested_value in value.values():
+            _add_swagger_file_format(nested_value)
+    elif isinstance(value, list):
+        for nested_value in value:
+            _add_swagger_file_format(nested_value)
+
+
+_generated_openapi = app.openapi
+
+
+def custom_openapi() -> dict[str, Any]:
+    schema = _generated_openapi()
+    _add_swagger_file_format(schema)
+    return schema
+
+
+app.openapi = custom_openapi
 # TODO: Need to see about the logger settings and how to use it properly
 logger = logging.getLogger("uvicorn.error")
 
